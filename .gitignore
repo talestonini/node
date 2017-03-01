@@ -1,0 +1,9 @@
+node_modules/
+**/.idea
+**/.vscode
+**/playground
+
+# specific
+hello-world/*
+notes-node/feedback.txt
+notes-node/notes-data.json
