@@ -2,6 +2,7 @@ node_modules/
 **/.idea
 **/.vscode
 **/playground
+**/*.log
 
 # specific
 hello-world/*
