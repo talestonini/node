@@ -2,7 +2,7 @@ const express = require('express');
 const hbs = require('hbs');
 const fs = require('fs');
 
-const SERVER_PORT = 3000;
+const SERVER_PORT = process.env.PORT || 3000;
 const LOG_FILE = 'server.log';
 
 let app = express();
