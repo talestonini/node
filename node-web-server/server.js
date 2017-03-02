@@ -35,14 +35,20 @@ hbs.registerHelper('screamIt', (text) => text.toUpperCase());
 
 app.get('/', (req, res) => {
   res.render('home.hbs', {
-    pageTitle: 'Home Page',
+    pageTitle: 'Home',
     user: 'Tales Tonini'
+  });
+});
+
+app.get('/projects', (req, res) => {
+  res.render('projects.hbs', {
+    pageTitle: 'Projects'
   });
 });
 
 app.get('/about', (req, res) => {
   res.render('about.hbs', {
-    pageTitle: 'About Page'
+    pageTitle: 'About'
   });
 });
 
