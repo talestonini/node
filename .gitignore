@@ -3,6 +3,8 @@ node_modules/
 **/.vscode
 **/playground
 **/*.log
+**/.gitignore
+mongo-data/
 
 # specific
 hello-world/*
