@@ -1,7 +1,6 @@
 node_modules/
 **/.idea
 **/.vscode
-**/playground
 **/*.log
 **/.gitignore
 mongo-data/
