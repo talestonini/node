@@ -31,7 +31,6 @@ describe('POST /todos', () => {
         if (err) {
           return done(err);
         }
-
         Todo.find({ text }).then((todos) => {
           expect(todos.length).toBe(1);
           expect(todos[0].text).toBe(text);
@@ -49,7 +48,6 @@ describe('POST /todos', () => {
         if (err) {
           return done(err);
         }
-
         Todo.find().then((todos) => {
           expect(todos.length).toBe(stubs.length);
           done();
@@ -72,11 +70,12 @@ describe('GET /todos', () => {
 
 describe('GET /todos/:id', () => {
   it('should get a todo by id', (done) => {
+    let _id = stubs[1]._id.toHexString();
     request(app)
-      .get(`/todos/${stubs[1]._id.toHexString()}`)
+      .get(`/todos/${_id}`)
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo.text).toBe(stubs[1].text);
+        expect(res.body.todo._id).toBe(_id);
       })
       .end(done);
   });
@@ -98,13 +97,22 @@ describe('GET /todos/:id', () => {
 
 describe('DELETE /todos/:id', () => {
   it('should delete a todo by id', (done) => {
+    let _id = stubs[1]._id.toHexString();
     request(app)
-      .delete(`/todos/${stubs[1]._id.toHexString()}`)
+      .delete(`/todos/${_id}`)
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo.text).toBe(stubs[1].text);
+        expect(res.body.todo._id).toBe(_id);
       })
-      .end(done);
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        Todo.findById(_id).then((todo) => {
+          expect(todo).toNotExist();
+          done();
+        }).catch((e) => done(e));
+      });
   });
 
   it('should return 404 if todo not found', (done) => {
