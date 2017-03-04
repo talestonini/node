@@ -1,19 +1,19 @@
 const expect = require('expect');
 const request = require('supertest');
-const {ObjectID} = require('mongodb');
 
 const {app} = require('../server');
 const {Todo} = require('../models/todo');
 
 let stubs = [
-  { _id: new ObjectID(), text: 'Fisrt test todo' },
-  { _id: new ObjectID(), text: 'Second test todo' }
+  { text: 'Fisrt test todo' },
+  { text: 'Second test todo' }
 ];
+let dbStubs = null;
 
 beforeEach((done) => {
   Todo.remove({})
     .then(() => {
-      return Todo.insertMany(stubs);
+      return Todo.insertMany(stubs).then((todos) => dbStubs = todos);
     })
     .then(() => done());
 });
@@ -75,7 +75,7 @@ describe('GET /todos', () => {
 describe('GET /todos/:id', () => {
   it('should get a todo by id', (done) => {
     request(app)
-      .get(`/todos/${stubs[1]._id.toHexString()}`)
+      .get(`/todos/${dbStubs[1]._id.toHexString()}`)
       .expect(200)
       .expect((res) => {
         expect(res.body.todo.text).toBe(stubs[1].text);
