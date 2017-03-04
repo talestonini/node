@@ -6,8 +6,8 @@ const {app} = require('../server');
 const {Todo} = require('../models/todo');
 
 let stubs = [
-  { text: 'Fisrt test todo' },
-  { text: 'Second test todo' }
+  { text: 'Feed the dog' },
+  { text: 'Feed the cat', completed: true, completedAt: 123 }
 ];
 
 beforeEach((done) => {
@@ -31,11 +31,13 @@ describe('POST /todos', () => {
         if (err) {
           return done(err);
         }
-        Todo.find({ text }).then((todos) => {
-          expect(todos.length).toBe(1);
-          expect(todos[0].text).toBe(text);
-          done();
-        }).catch((e) => done(e));
+        Todo.find({ text })
+          .then((todos) => {
+            expect(todos.length).toBe(1);
+            expect(todos[0].text).toBe(text);
+            done();
+          })
+          .catch((e) => done(e));
       });
   });
 
@@ -48,10 +50,12 @@ describe('POST /todos', () => {
         if (err) {
           return done(err);
         }
-        Todo.find().then((todos) => {
-          expect(todos.length).toBe(stubs.length);
-          done();
-        }).catch((e) => done(e));
+        Todo.find()
+          .then((todos) => {
+            expect(todos.length).toBe(stubs.length);
+            done();
+          })
+          .catch((e) => done(e));
       });
   });
 });
@@ -108,10 +112,12 @@ describe('DELETE /todos/:id', () => {
         if (err) {
           return done(err);
         }
-        Todo.findById(_id).then((todo) => {
-          expect(todo).toNotExist();
-          done();
-        }).catch((e) => done(e));
+        Todo.findById(_id)
+          .then((todo) => {
+            expect(todo).toNotExist();
+            done();
+          })
+          .catch((e) => done(e));
       });
   });
 
@@ -125,6 +131,76 @@ describe('DELETE /todos/:id', () => {
   it('should return 404 for non-object ids', (done) => {
     request(app)
       .delete('/todos/123')
+      .expect(404)
+      .end(done);
+  });
+});
+
+describe('PATCH /todos/:id', () => {
+  it('should update a todo by id', (done) => {
+    let _id = stubs[0]._id.toHexString();
+    let text = 'Feed the dog and the kangaroo';
+    request(app)
+      .patch(`/todos/${_id}`)
+      .send({ text, completed: true, completedAt: 456 })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).toBe(text);
+        expect(res.body.todo.completed).toBe(true);
+        expect(res.body.todo.completedAt).toBeA('number').toNotBe(456);
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        Todo.findById(_id)
+          .then((todo) => {
+            expect(todo.text).toBe(text);
+            expect(todo.completed).toBe(true);
+            expect(res.body.todo.completedAt).toBeA('number').toNotBe(456);
+            done();
+          })
+          .catch((e) => done(e));
+      });
+  });
+
+  it('should clear completedAt when todo is not completed', (done) => {
+    let _id = stubs[1]._id.toHexString();
+    let text = 'Feed the cat and the kangaroo';
+    request(app)
+      .patch(`/todos/${_id}`)
+      .send({ text, completed: false, completedAt: 456 })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).toBe(text);
+        expect(res.body.todo.completed).toBe(false);
+        expect(res.body.todo.completedAt).toNotExist();
+      })
+      .end((err, res) => {
+        if (err) {
+          return done(err);
+        }
+        Todo.findById(_id)
+          .then((todo) => {
+            expect(res.body.todo.text).toBe(text);
+            expect(res.body.todo.completed).toBe(false);
+            expect(res.body.todo.completedAt).toNotExist();
+            done();
+          })
+          .catch((e) => done(e));
+      });
+  });
+
+  it('should return 404 if todo not found', (done) => {
+    request(app)
+      .patch(`/todos/${new ObjectID().toHexString()}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 for non-object ids', (done) => {
+    request(app)
+      .patch('/todos/123')
       .expect(404)
       .end(done);
   });
