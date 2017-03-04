@@ -82,16 +82,38 @@ describe('GET /todos/:id', () => {
   });
 
   it('should return 404 if todo not found', (done) => {
-    let _id = new ObjectID().toHexString;
     request(app)
-      .get(`/todos/${_id}`)
+      .get(`/todos/${new ObjectID().toHexString()}`)
       .expect(404)
       .end(done);
   });
 
   it('should return 404 for non-object ids', (done) => {
     request(app)
-      .get(`/todos/123`)
+      .get('/todos/123')
+      .expect(404)
+      .end(done);
+  });
+});
+
+describe('DELETE /todos/:id', () => {
+  it('should delete a todo by id', (done) => {
+    request(app)
+      .delete(`/todos/${stubs[1]._id.toHexString()}`)
+      .expect(200)
+      .end(done);
+  });
+
+  it('should return 404 if todo not found', (done) => {
+    request(app)
+      .delete(`/todos/${new ObjectID().toHexString()}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 for non-object ids', (done) => {
+    request(app)
+      .delete('/todos/123')
       .expect(404)
       .end(done);
   });
