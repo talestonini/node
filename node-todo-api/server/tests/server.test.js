@@ -101,6 +101,9 @@ describe('DELETE /todos/:id', () => {
     request(app)
       .delete(`/todos/${stubs[1]._id.toHexString()}`)
       .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).toBe(stubs[1].text);
+      })
       .end(done);
   });
 
