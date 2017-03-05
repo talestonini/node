@@ -13,7 +13,7 @@ let app = express();
 app.use(bodyParser.json());
 
 app.post('/todos', (req, res) => {
-  new Todo({ text: req.body.text })
+  new Todo(_.pick(req.body, ['text']))
     .save()
     .then((todo) => res.status(201).send(todo))
     .catch((e) => res.status(400).send(e));
@@ -78,6 +78,15 @@ app.patch('/todos/:id', (req, res) => {
       }
       res.send({ todo });
     })
+    .catch((e) => res.status(400).send(e));
+});
+
+app.post('/users', (req, res) => {
+  let user = new User(_.pick(req.body, ['email', 'password']))
+  user
+    .save()
+    .then(() => user.generateAuthToken())
+    .then((token) => res.header('x-auth', token).status(201).send(user))
     .catch((e) => res.status(400).send(e));
 });
 
