@@ -1,0 +1,37 @@
+{
+  "name": "node-js-api-training",
+  "version": "1.0.0",
+  "description": "Welcome! This short training course will take you through the steps needed to build a Web API in Node.js. This course is intended for beginners to Node.js who ideally have some API programming experience in other languages and frameworks.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec 'npm test'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aramk/node-js-api-training.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aramk/node-js-api-training/issues"
+  },
+  "homepage": "https://github.com/aramk/node-js-api-training#readme",
+  "dependencies": {
+    "axios": "^0.15.3",
+    "body-parser": "^1.17.0",
+    "camelcase": "^4.0.0",
+    "decamelize": "^1.2.0",
+    "express": "^4.15.0",
+    "lodash": "^4.17.4",
+    "mongodb": "^2.2.24",
+    "mongoose": "^4.8.6",
+    "request": "^2.80.0"
+  },
+  "devDependencies": {
+    "expect": "^1.20.2",
+    "mocha": "^3.2.0",
+    "supertest": "^3.0.0"
+  }
+}
