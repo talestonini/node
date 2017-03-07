@@ -21,16 +21,17 @@ let importProperties = filters => {
         return errorResponse(response);
       }
 
-      let properties = [];
+      let persistPromises = [];
       response.data.listing.forEach(listing => {
         let property = listing2Property(listing, response.data.postcode, response.data.country);
-        persistProperty(property);
-        properties.push(property);
+        persistPromises.push(persistProperty(property));
       });
-      return {
-        count: properties.length,
-        properties
-      };
+      return Promise.all(persistPromises).then((properties) => {
+        return {
+          count: properties.length,
+          properties
+        };
+      });
     }, error => errorResponse(error.response));
 };
 
@@ -81,11 +82,11 @@ let listing2Property = (listing, postcode, country) => {
     },
     image: listing.image_645_430_url,
     thumbnail: listing.thumbnail_url
-  }
+  };
 };
 
 let persistProperty = property => {
-  Property.findOneAndRemove({ listingId: property.listingId })
+  return Property.findOneAndRemove({ listingId: property.listingId })
     .then(() => new Property(property).save())
     .catch(e => console.log('error persisting property:', e));
 }
