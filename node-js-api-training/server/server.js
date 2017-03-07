@@ -13,13 +13,13 @@ app.use(bodyParser.json());
 
 app.post('/properties/zoopla/import', (req, res) => {
   zoopla.importProperties(req.body)
-    .then((response) => {
+    .then(response => {
       if (response.httpStatus) {
         return res.status(response.httpStatus).send(_.pick(response, ['errorCode', 'errorMessage']));
       }
       res.send(response);
     })
-    .catch((e) => {
+    .catch(e => {
       console.log('error importing properties from Zoopla:', e);
       res.status(500).send({
         errorCode: 'unknown',

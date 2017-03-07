@@ -15,7 +15,7 @@ let PropertySchema = new mongoose.Schema({
     trim: true
   },
   publishedDate: {
-    type: String, // TODO: change to Number
+    type: Date, // TODO: change to Date
     required: true
   },
   numFloors: {

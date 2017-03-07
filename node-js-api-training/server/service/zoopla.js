@@ -1,5 +1,4 @@
-const request = require('request');
-const axios = require('axios');
+let axios = require('axios');
 const decamelize = require('decamelize');
 
 const {Property} = require('../model/property');
@@ -12,18 +11,18 @@ const IMPORT_PROP_DEFAULT_FILTERS = {
   pageSize: 100,
 };
 
-let importProperties = (filters) => {
+let importProperties = filters => {
   let params = filters2Params(filters);
   let zooplaUrl = `http://api.zoopla.co.uk/api/v1/property_listings.json?api_key=${API_KEY}${params}`;
   console.log(`GET ${zooplaUrl}`);
   return axios.get(zooplaUrl)
-    .then((response) => {
+    .then(response => {
       if (response.status === 200 && response.data.error_code) {
         return errorResponse(response);
       }
 
       let properties = [];
-      response.data.listing.forEach((listing) => {
+      response.data.listing.forEach(listing => {
         let property = listing2Property(listing, response.data.postcode, response.data.country);
         persistProperty(property);
         properties.push(property);
@@ -32,10 +31,10 @@ let importProperties = (filters) => {
         count: properties.length,
         properties
       };
-    }, (error) => errorResponse(error.response));
+    }, error => errorResponse(error.response));
 };
 
-filters2Params = (filters) => {
+let filters2Params = filters => {
   let params = '';
   for (let defaultFilter in IMPORT_PROP_DEFAULT_FILTERS) {
     if (!filters[defaultFilter]) {
@@ -48,9 +47,9 @@ filters2Params = (filters) => {
   return params;
 };
 
-reqParam = (name, value) => `&${encodeURIComponent(decamelize(name))}=${encodeURIComponent(value)}`;
+let reqParam = (name, value) => `&${encodeURIComponent(decamelize(name))}=${encodeURIComponent(value)}`;
 
-errorResponse = (response) => {
+let errorResponse = response => {
   console.log('error querying Zoopla:', response.status);
   console.log(response.data);
   return {
@@ -60,7 +59,7 @@ errorResponse = (response) => {
   };
 };
 
-listing2Property = (listing, postcode, country) => {
+let listing2Property = (listing, postcode, country) => {
   return {
     listingId: listing.listing_id,
     url: listing.details_url,
@@ -85,10 +84,10 @@ listing2Property = (listing, postcode, country) => {
   }
 };
 
-persistProperty = (property) => {
+let persistProperty = property => {
   Property.findOneAndRemove({ listingId: property.listingId })
     .then(() => new Property(property).save())
-    .catch((e) => console.log('error persisting property:', e));
+    .catch(e => console.log('error persisting property:', e));
 }
 
 module.exports = {
