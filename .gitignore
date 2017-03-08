@@ -3,6 +3,7 @@ node_modules/
 **/.vscode
 **/*.log
 **/.gitignore
+**/.nyc_output
 mongo-data/
 
 # specific

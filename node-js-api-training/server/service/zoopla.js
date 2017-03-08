@@ -111,7 +111,7 @@ let mapToProperty = (listing, postcode, country) => {
 
 let persistProperty = property => {
   return Property.findOneAndUpdate({ listingId: property.listingId }, { $set: property }, { new: true })
-    .then((updatedProperty) => updatedProperty || new Property(property).save())
+    .then(updatedProperty => updatedProperty || new Property(property).save())
     .catch(e => console.log('error persisting property:', e));
 }
 
