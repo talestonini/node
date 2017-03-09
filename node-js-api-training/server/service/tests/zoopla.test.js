@@ -1,7 +1,5 @@
 const expect = require('expect');
 const rewire = require('rewire');
-const fs = require('fs');
-const {ObjectID} = require('mongodb');
 const mockAxios = require('axios');
 const MockAdapter = require('axios-mock-adapter');
 
@@ -11,7 +9,7 @@ const {Property} = require('../../model/property');
 let mockAxiosAdapter = new MockAdapter(mockAxios);
 zoopla.__set__('axios', mockAxios);
 
-let loadResponse = file => JSON.parse(fs.readFileSync(`${__dirname}/stubs/${file}.json`));
+let loadResponse = file => require(`${__dirname}/stubs/${file}.json`);
 const responses = [
   [200, loadResponse('200_zoopla_price_range_1-9')],
   [200, loadResponse('200_zoopla_price_range_2-9')],

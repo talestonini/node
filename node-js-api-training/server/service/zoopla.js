@@ -8,6 +8,9 @@ const {Property} = require('../model/property');
 const API_KEY = 'xexa5zsx55mttszpd9yuykj3';
 const DEFAULT_FILTERS = { country: 'England', outcode: 'BR1', pageNumber: 1, pageSize: 100 };
 
+// let updates = 0;
+// let inserts = 0;
+
 /**
  * Imports properties from Zoopla's listings into the database.
  * 
@@ -41,6 +44,10 @@ let importProperties = (filters, pagesLimit = Number.MAX_SAFE_INTEGER) => {
             importCount: aggregation.importCount,
             'properties.length': aggregation.properties.length
           });
+
+          // console.log('updates:', updates);
+          // console.log('inserts:', inserts);
+
           return aggregation;
         });
     });
@@ -111,7 +118,17 @@ let mapToProperty = (listing, postcode, country) => {
 
 let persistProperty = property => {
   return Property.findOneAndUpdate({ listingId: property.listingId }, { $set: property }, { new: true })
-    .then(updatedProperty => updatedProperty || new Property(property).save())
+    .then(updatedProperty => updatedProperty ? updatedProperty : new Property(property).save())
+  // return Property.findOneAndUpdate({ listingId: property.listingId }, { $set: property }, { new: true })
+  //   .then(updatedProperty => {
+  //     if (updatedProperty) {
+  //       updates++;
+  //       return updatedProperty;
+  //     } else {
+  //       inserts++;
+  //       return new Property(property).save();
+  //     }
+  //   })
     .catch(e => console.log('error persisting property:', e));
 };
 
