@@ -68,7 +68,7 @@ let importPageProperties = filters => {
       return Promise.all(persistPromises).then(properties => {
         return {
           count,
-          importCount: properties.length,
+          importCount: _.filter(properties, p => p && p.__v === 0).length,
           properties: _.map(properties, p => _.pick(p, ['_id', '__v', 'listingId']))
         };
       });
@@ -113,7 +113,10 @@ let mapToProperty = (listing, postcode, country) => {
 let persistProperty = property => {
   return Property.findOneAndUpdate({ listingId: property.listingId }, { $set: property }, { new: true })
     .then(updatedProperty => updatedProperty ? updatedProperty : new Property(property).save())
-    .catch(e => console.log('error persisting property:', e));
+    .catch(e => {
+      console.log('error persisting property:', e);
+      return e;
+    });
 };
 
 let errorResponse = response => {

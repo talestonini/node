@@ -32,14 +32,16 @@ describe('Zoopla service', () => {
 
   it('should import multiple page properties', () => {
     let count = 854;
+    let distinct = 674;
     return zoopla.importProperties({ minimumPrice: 998000, maximumPrice: 1000000 })
       .then(response => {
         expect(response.count).toBe(count, `count should be ${count}, but is ${response.count}`);
-        expect(response.importCount).toBe(count, `importCount should be ${count}, but is ${response.importCount}`);
+        expect(response.importCount)
+          .toBe(distinct, `importCount should be ${distinct}, but is ${response.importCount}`);
         expect(response.properties.length)
-          .toBe(count, `properties length should be ${count}, but is ${response.properties.length}`);
+          .toBe(distinct, `properties length should be ${distinct}, but is ${response.properties.length}`);
         return Property.count({})
-          .then(dbCount => expect(dbCount).toBe(count, `database count should be ${count}, but is ${dbCount}`));
+          .then(dbCount => expect(dbCount).toBe(distinct, `database count should be ${distinct}, but is ${dbCount}`));
       });
   });
 
